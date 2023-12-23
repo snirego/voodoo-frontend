@@ -11,3 +11,4 @@ npm-debug.log*
 
 #extras
 .DS_Store
+build/

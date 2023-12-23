@@ -36,7 +36,7 @@ const Dashboard = () => {
 
     return (
         <div className="flex flex-col gap-4 h-full">
-            <Loading loading={loading}>
+            {/* <Loading loading={loading}> */}
                 <ProjectDashboardHeader
                     userName={dashboardData?.userName}
                     taskCount={dashboardData?.taskCount}
@@ -56,7 +56,7 @@ const Dashboard = () => {
                         </div>
                     </div>
                 </div>
-            </Loading>
+            {/* </Loading> */}
         </div>
     )
 }

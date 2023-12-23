@@ -120,9 +120,9 @@ const TaskOverview = ({ data = {}, className }: TaskOverviewProps) => {
                     </div>
                 </>
             )}
-            <Loading loading={repaint} type="cover">
+            {/* <Loading loading={repaint} type="cover">
                 {repaint && <div className="h-[300px]" />}
-            </Loading>
+            </Loading> */}
         </Card>
     )
 }

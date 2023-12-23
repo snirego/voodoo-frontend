@@ -27,9 +27,9 @@ function useAuth() {
         values: SignInCredential
     ): Promise<
         | {
-              status: Status
-              message: string
-          }
+            status: Status
+            message: string
+        }
         | undefined
     > => {
         try {
@@ -37,18 +37,22 @@ function useAuth() {
             if (resp.data) {
                 const { token } = resp.data
                 dispatch(signInSuccess(token))
-                if (resp.data.user) {
-                    dispatch(
-                        setUser(
-                            resp.data.user || {
-                                avatar: '',
-                                userName: 'Anonymous',
-                                authority: ['USER'],
-                                email: '',
-                            }
-                        )
-                    )
+                const user = {
+                    avatar: '',
+                    userName: '',
+                    authority: ['admin'],
+                    email: values.email
                 }
+                dispatch(
+                    setUser(
+                        user || {
+                            avatar: '',
+                            userName: 'Anonymous',
+                            authority: ['USER'],
+                            email: '',
+                        }
+                    )
+                )
                 const redirectUrl = query.get(REDIRECT_URL_KEY)
                 navigate(
                     redirectUrl ? redirectUrl : appConfig.authenticatedEntryPath
@@ -58,7 +62,6 @@ function useAuth() {
                     message: '',
                 }
             }
-            // eslint-disable-next-line  @typescript-eslint/no-explicit-any
         } catch (errors: any) {
             return {
                 status: 'failed',
@@ -71,30 +74,11 @@ function useAuth() {
         try {
             const resp = await apiSignUp(values)
             if (resp.data) {
-                const { token } = resp.data
-                dispatch(signInSuccess(token))
-                if (resp.data.user) {
-                    dispatch(
-                        setUser(
-                            resp.data.user || {
-                                avatar: '',
-                                userName: 'Anonymous',
-                                authority: ['USER'],
-                                email: '',
-                            }
-                        )
-                    )
-                }
-                const redirectUrl = query.get(REDIRECT_URL_KEY)
-                navigate(
-                    redirectUrl ? redirectUrl : appConfig.authenticatedEntryPath
-                )
                 return {
                     status: 'success',
-                    message: '',
+                    message: resp.data.message,
                 }
             }
-            // eslint-disable-next-line  @typescript-eslint/no-explicit-any
         } catch (errors: any) {
             return {
                 status: 'failed',

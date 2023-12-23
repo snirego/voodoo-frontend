@@ -9,6 +9,10 @@ import { Field, Form, Formik } from 'formik'
 import * as Yup from 'yup'
 import useAuth from '@/utils/hooks/useAuth'
 import type { CommonProps } from '@/@types/common'
+import { toast } from '@/components/ui'
+import Notification from '@/components/ui/Notification'
+import { useNavigate } from 'react-router-dom'
+
 
 interface SignUpFormProps extends CommonProps {
     disableSubmit?: boolean
@@ -16,13 +20,13 @@ interface SignUpFormProps extends CommonProps {
 }
 
 type SignUpFormSchema = {
-    userName: string
+    username: string
     password: string
     email: string
 }
 
 const validationSchema = Yup.object().shape({
-    userName: Yup.string().required('Please enter your user name'),
+    username: Yup.string().required('Please enter your user name'),
     email: Yup.string()
         .email('Invalid email')
         .required('Please enter your email'),
@@ -34,6 +38,8 @@ const validationSchema = Yup.object().shape({
 })
 
 const SignUpForm = (props: SignUpFormProps) => {
+    const navigate = useNavigate()
+
     const { disableSubmit = false, className, signInUrl = '/sign-in' } = props
 
     const { signUp } = useAuth()
@@ -44,17 +50,21 @@ const SignUpForm = (props: SignUpFormProps) => {
         values: SignUpFormSchema,
         setSubmitting: (isSubmitting: boolean) => void
     ) => {
-        const { userName, password, email } = values
+        const { username, password, email } = values
         setSubmitting(true)
-        const result = await signUp({ userName, password, email })
-
+        const result = await signUp({ username, password, email })
+        if (result?.status === 'success') {
+            toast.push(<Notification title="Register">
+                {result?.message}
+            </Notification>)
+            navigate(signInUrl)
+        }
         if (result?.status === 'failed') {
             setMessage(result.message)
         }
 
         setSubmitting(false)
     }
-
     return (
         <div className={className}>
             {message && (
@@ -64,10 +74,10 @@ const SignUpForm = (props: SignUpFormProps) => {
             )}
             <Formik
                 initialValues={{
-                    userName: 'admin1',
-                    password: '123Qwe1',
-                    confirmPassword: '123Qwe1',
-                    email: 'test@testmail.com',
+                    username: '',
+                    password: '',
+                    confirmPassword: '',
+                    email: '',
                 }}
                 validationSchema={validationSchema}
                 onSubmit={(values, { setSubmitting }) => {
@@ -83,13 +93,13 @@ const SignUpForm = (props: SignUpFormProps) => {
                         <FormContainer>
                             <FormItem
                                 label="User Name"
-                                invalid={errors.userName && touched.userName}
-                                errorMessage={errors.userName}
+                                invalid={errors.username && touched.username}
+                                errorMessage={errors.username}
                             >
                                 <Field
                                     type="text"
                                     autoComplete="off"
-                                    name="userName"
+                                    name="username"
                                     placeholder="User Name"
                                     component={Input}
                                 />
